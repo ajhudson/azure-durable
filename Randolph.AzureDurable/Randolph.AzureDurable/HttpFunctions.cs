@@ -1,5 +1,7 @@
 ﻿using System.Net.Http;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Azure.WebJobs.Extensions.Http;
@@ -10,9 +12,9 @@ namespace Randolph.AzureDurable;
 public static class HttpFunctions
 {
     [FunctionName(nameof(ProcessVideoStarter))]
-    public static async Task<HttpResponseMessage> ProcessVideoStarter(
+    public static async Task<IActionResult> ProcessVideoStarter(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")]
-        HttpRequestMessage req,
+        HttpRequest req,
         [DurableClient] IDurableOrchestrationClient starter,
         ILogger log)
     {
