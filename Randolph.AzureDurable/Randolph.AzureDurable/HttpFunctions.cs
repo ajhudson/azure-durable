@@ -18,10 +18,21 @@ public static class HttpFunctions
         [DurableClient] IDurableOrchestrationClient starter,
         ILogger log)
     {
-        // Function input comes from the request content.
-        string instanceId = await starter.StartNewAsync("Starter", null);
+        const string VideoKey = "video";
+        
+        var queryStringParams = req.GetQueryParameterDictionary();
 
-        log.LogInformation($"Started orchestration with ID = '{instanceId}'.");
+        if (!queryStringParams.ContainsKey(VideoKey))
+        {
+            return new BadRequestObjectResult($"Expected a query string parameter: {VideoKey}");
+        }
+
+        string videoUrl = queryStringParams[VideoKey];
+        
+        // Function input comes from the request content.
+        string instanceId = await starter.StartNewAsync("ProcessVideoOrchestrator", null, videoUrl);
+
+        log.LogInformation("Started orchestration with ID = '{InstanceId}'", instanceId);
 
         return starter.CreateCheckStatusResponse(req, instanceId);
     }
