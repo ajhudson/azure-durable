@@ -1,5 +1,4 @@
-﻿using System.Net.Http;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
@@ -11,6 +10,13 @@ namespace Randolph.AzureDurable;
 
 public static class HttpFunctions
 {
+    /// <summary>
+    /// This function kicks-off the process.
+    /// </summary>
+    /// <param name="req"></param>
+    /// <param name="starter"></param>
+    /// <param name="log"></param>
+    /// <returns></returns>
     [FunctionName(nameof(ProcessVideoStarter))]
     public static async Task<IActionResult> ProcessVideoStarter(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")]
@@ -30,7 +36,7 @@ public static class HttpFunctions
         string videoUrl = queryStringParams[VideoKey];
         
         // Function input comes from the request content.
-        string instanceId = await starter.StartNewAsync("ProcessVideoOrchestrator", null, videoUrl);
+        string instanceId = await starter.StartNewAsync(nameof(OrchestratorFunctions.ProcessVideoOrchestrator), null, videoUrl);
 
         log.LogInformation("Started orchestration with ID = '{InstanceId}'", instanceId);
 
