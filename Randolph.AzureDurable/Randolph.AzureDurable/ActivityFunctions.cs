@@ -12,33 +12,33 @@ public static class ActivityFunctions
     [FunctionName(nameof(TranscodeVideo))]
     public static async Task<string> TranscodeVideo([ActivityTrigger] string inputVideo, ILogger log)
     {
-        const string FileSuffix = "transcoded.mp4";
+        const string fileSuffix = "transcoded.mp4";
         
         log.LogInformation("Transcoding {InputVideo}", inputVideo);
         
         // simulate doing the activity (replace with FFMPEG)
         await Task.Delay(5000);
 
-        return $"{Path.GetFileNameWithoutExtension(inputVideo)}{FileSuffix}";
+        return $"{Path.GetFileNameWithoutExtension(inputVideo)}{fileSuffix}";
     }
 
     [FunctionName(nameof(ExtractThumbnail))]
     public static async Task<string> ExtractThumbnail([ActivityTrigger] string inputVideo, ILogger log)
     {
-        const string FileSuffix = "thumbnail.png";
+        const string fileSuffix = "thumbnail.png";
         
         log.LogInformation("Extracting thumbnail for {InputVideo}", inputVideo);
         
         // simulate doing the activity (replace with FFMPEG)
         await Task.Delay(5000);
 
-        return $"{Path.GetFileNameWithoutExtension(inputVideo)}{FileSuffix}";
+        return $"{Path.GetFileNameWithoutExtension(inputVideo)}{fileSuffix}";
     }
 
     [FunctionName(nameof(PrependIntro))]
     public static async Task<string> PrependIntro([ActivityTrigger] string inputVideo, ILogger log)
     {
-        const string FileSuffix = "withintro.mp4";
+        const string fileSuffix = "withintro.mp4";
         
         // We are getting the intro location from environment variables rather than passing it in because it otherwise would have violated the orchestration function constraints
         // Alternatively we could have got this value before we called the orchestrator and passed it into the orchestrator itself which in turn would be passed to the activity function
@@ -48,6 +48,6 @@ public static class ActivityFunctions
         // simulate doing the activity (replace with FFMPEG)
         await Task.Delay(5000);
         
-        return $"{Path.GetFileNameWithoutExtension(inputVideo)}{FileSuffix}";
+        return $"{Path.GetFileNameWithoutExtension(inputVideo)}{fileSuffix}";
     }
 }
