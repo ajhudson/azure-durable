@@ -24,17 +24,17 @@ public static class HttpFunctions
         [DurableClient] IDurableOrchestrationClient starter,
         ILogger log)
     {
-        const string VideoKey = "video";
-        
+        const string videoKey = "video";
+
         var queryStringParams = req.GetQueryParameterDictionary();
 
-        if (!queryStringParams.ContainsKey(VideoKey))
+        if (!queryStringParams.ContainsKey(videoKey))
         {
-            return new BadRequestObjectResult($"Expected a query string parameter: {VideoKey}");
+            return new BadRequestObjectResult($"Expected a query string parameter: {videoKey}");
         }
 
-        string videoUrl = queryStringParams[VideoKey];
-        
+        string videoUrl = queryStringParams[videoKey];
+
         // Function input comes from the request content.
         string instanceId = await starter.StartNewAsync(nameof(OrchestratorFunctions.ProcessVideoOrchestrator), null, videoUrl);
 
