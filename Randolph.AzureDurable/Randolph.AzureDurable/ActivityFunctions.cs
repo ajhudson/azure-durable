@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
@@ -9,6 +10,8 @@ namespace Randolph.AzureDurable;
 
 public static class ActivityFunctions
 {
+    private const int DelayMilliSeconds = 2000;
+    
     [FunctionName(nameof(TranscodeVideo))]
     public static async Task<string> TranscodeVideo([ActivityTrigger] string inputVideo, ILogger log)
     {
@@ -17,7 +20,7 @@ public static class ActivityFunctions
         log.LogInformation("Transcoding {InputVideo}", inputVideo);
         
         // simulate doing the activity (replace with FFMPEG)
-        await Task.Delay(5000);
+        await Task.Delay(DelayMilliSeconds);
 
         return $"{Path.GetFileNameWithoutExtension(inputVideo)}{FileSuffix}";
     }
@@ -28,9 +31,15 @@ public static class ActivityFunctions
         const string FileSuffix = "thumbnail.png";
         
         log.LogInformation("Extracting thumbnail for {InputVideo}", inputVideo);
-        
+
         // simulate doing the activity (replace with FFMPEG)
-        await Task.Delay(5000);
+        await Task.Delay(DelayMilliSeconds);
+
+        // TODO this is a deliberate error to demo exception handling
+        if (inputVideo.Contains("error"))
+        {
+            throw new InvalidCastException("Cannot get thumbnail");
+        }
 
         return $"{Path.GetFileNameWithoutExtension(inputVideo)}{FileSuffix}";
     }
@@ -46,8 +55,22 @@ public static class ActivityFunctions
         log.LogInformation("Prepending Intro {IntroLocation} to {InputVideo}", introLocation, inputVideo);
         
         // simulate doing the activity (replace with FFMPEG)
-        await Task.Delay(5000);
+        await Task.Delay(DelayMilliSeconds);
         
         return $"{Path.GetFileNameWithoutExtension(inputVideo)}{FileSuffix}";
+    }
+
+    [FunctionName(nameof(CleanUp))]
+    public static async Task<string> CleanUp([ActivityTrigger] string?[] filesToCleanUp, ILogger log)
+    {
+        var files = filesToCleanUp.Where(f => f != null);
+
+        foreach (var currentFile in files)
+        {
+            log.LogInformation("Deleting file {FileName}", currentFile);
+            await Task.Delay(DelayMilliSeconds);
+        }
+
+        return "Clean up successfully";
     }
 }
